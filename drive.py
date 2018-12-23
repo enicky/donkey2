@@ -135,7 +135,7 @@ if __name__ == '__main__':
     args = docopt(__doc__)
     cfg = dk.load_config()
 
-    drive(cfg, model_path=args['--model'], use_pwm=args['--pwm'])
+    drive(cfg, model_path=args['--model'])
 
 
 
