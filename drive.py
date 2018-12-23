@@ -35,7 +35,7 @@ def drive(cfg, model_path=None, use_chaos=False, use_pwm=False):
 
     if use_pwm or cfg.USE_PWM_AS_DEFAULT:
         print("Use PWM controller as default")
-        ctr = RcController(0)
+        ctr = RcController(0, cfg.PWM_PORT)
     else:
         ctr = LocalWebController(use_chaos=use_chaos)
     V.add(ctr,
