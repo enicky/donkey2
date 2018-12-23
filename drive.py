@@ -18,9 +18,10 @@ from donkeypart_PCA9685_actuators import PCA9685, PWMSteering, PWMThrottle
 from donkeypart_tub import TubWriter
 from donkeypart_web_controller import LocalWebController
 from donkeypart_common import Timestamp
+from donkeypart_rc_controller import RcController
 
 
-def drive(cfg, model_path=None, use_chaos=False):
+def drive(cfg, model_path=None, use_chaos=False, use_pwm=False):
     """
     """
 
@@ -34,9 +35,9 @@ def drive(cfg, model_path=None, use_chaos=False):
 
     if use_pwm or cfg.USE_PWM_AS_DEFAULT:
         print("Use PWM controller as default")
-        ctr =
-
-    ctr = LocalWebController(use_chaos=use_chaos)
+        ctr = RcController(0)
+    else:
+        ctr = LocalWebController(use_chaos=use_chaos)
     V.add(ctr,
           inputs=['cam/image_array'],
           outputs=['user/angle', 'user/throttle', 'user/mode', 'recording'],
@@ -134,7 +135,7 @@ if __name__ == '__main__':
     args = docopt(__doc__)
     cfg = dk.load_config()
 
-    drive(cfg, model_path=args['--model'])
+    drive(cfg, model_path=args['--model'], use_pwm=args['--pwm'])
 
 
 
