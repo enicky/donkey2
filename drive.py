@@ -32,6 +32,10 @@ def drive(cfg, model_path=None, use_chaos=False):
     cam = PiCamera(resolution=cfg.CAMERA_RESOLUTION)
     V.add(cam, outputs=['cam/image_array'], threaded=True)
 
+    if use_pwm or cfg.USE_PWM_AS_DEFAULT:
+        print("Use PWM controller as default")
+        ctr =
+
     ctr = LocalWebController(use_chaos=use_chaos)
     V.add(ctr,
           inputs=['cam/image_array'],
