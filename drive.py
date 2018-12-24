@@ -19,6 +19,7 @@ from donkeypart_tub import TubWriter
 from donkeypart_web_controller import LocalWebController
 from donkeypart_common import Timestamp
 from donkeypart_rc_controller import RcController
+from donkeypart_debugger import DonkeypartDebugger
 
 
 def drive(cfg, model_path=None, use_chaos=False, use_pwm=False):
@@ -33,6 +34,7 @@ def drive(cfg, model_path=None, use_chaos=False, use_pwm=False):
     cam = PiCamera(resolution=cfg.CAMERA_RESOLUTION)
     V.add(cam, outputs=['cam/image_array'], threaded=True)
 
+
     if use_pwm or cfg.USE_PWM_AS_DEFAULT:
         print("Use PWM controller as default")
         ctr = RcController(cfg.PWM_PORT)
@@ -42,6 +44,10 @@ def drive(cfg, model_path=None, use_chaos=False, use_pwm=False):
           inputs=['cam/image_array'],
           outputs=['user/angle', 'user/throttle', 'user/mode', 'recording'],
           threaded=True)
+
+    debuggerPart = DonkeypartDebugger()
+    V.add(debuggerPart, inputs=['cam/image_array','user/angle','user/throttle','user/mode','recording'],
+          outputs=['cam/image_array','user/angle','user/throttle','user/mode','recording'])
 
     # See if we should even run the pilot module.
     # This is only needed because the part run_condition only accepts boolean
@@ -68,19 +74,19 @@ def drive(cfg, model_path=None, use_chaos=False, use_pwm=False):
                   'pilot/angle', 'pilot/throttle'],
           outputs=['angle', 'throttle'])
 
-    steering_controller = PCA9685(cfg.STEERING_CHANNEL)
-    steering = PWMSteering(controller=steering_controller,
-                           left_pulse=cfg.STEERING_LEFT_PWM,
-                           right_pulse=cfg.STEERING_RIGHT_PWM) 
+    #steering_controller = PCA9685(cfg.STEERING_CHANNEL)
+    #steering = PWMSteering(controller=steering_controller,
+    #                       left_pulse=cfg.STEERING_LEFT_PWM,
+    #                       right_pulse=cfg.STEERING_RIGHT_PWM)
 
-    throttle_controller = PCA9685(cfg.THROTTLE_CHANNEL)
-    throttle = PWMThrottle(controller=throttle_controller,
-                           max_pulse=cfg.THROTTLE_FORWARD_PWM,
-                           zero_pulse=cfg.THROTTLE_STOPPED_PWM,
-                           min_pulse=cfg.THROTTLE_REVERSE_PWM)
+    #throttle_controller = PCA9685(cfg.THROTTLE_CHANNEL)
+    #throttle = PWMThrottle(controller=throttle_controller,
+    #                       max_pulse=cfg.THROTTLE_FORWARD_PWM,
+    #                       zero_pulse=cfg.THROTTLE_STOPPED_PWM,
+    #                       min_pulse=cfg.THROTTLE_REVERSE_PWM)
 
-    V.add(steering, inputs=['angle'])
-    V.add(throttle, inputs=['throttle'])
+    #V.add(steering, inputs=['angle'])
+    #V.add(throttle, inputs=['throttle'])
 
     # add tub to save data
     inputs = ['cam/image_array', 'user/angle', 'user/throttle', 'user/mode', 'timestamp']
